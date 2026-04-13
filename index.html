@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aprende Inglés · Para colombianos</title>
+<style>
+  :root {
+    --co-yellow: #FCD116; --co-blue: #003893; --co-red: #CE1126;
+    --bg: #0f1222; --panel: #171a30; --panel-2: #1f2340;
+    --text: #eef0ff; --muted: #a8adcf; --accent: #6ea8ff;
+    --good: #4ade80; --bad: #f87171; --gold: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(252,209,22,0.10), transparent 60%),
+      radial-gradient(1000px 500px at 110% 10%, rgba(0,56,147,0.35), transparent 60%),
+      radial-gradient(800px 400px at 50% 120%, rgba(206,17,38,0.15), transparent 60%),
+      var(--bg);
+    color: var(--text); min-height: 100vh; line-height: 1.5;
+  }
+  header { padding: 24px 20px 8px; text-align: center; }
+  .flag-bar { display: inline-flex; border-radius: 999px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.35); margin-bottom: 12px; }
+  .flag-bar span { display: block; width: 34px; height: 10px; }
+  .flag-bar span:nth-child(1) { background: var(--co-yellow); width: 52px; }
+  .flag-bar span:nth-child(2) { background: var(--co-blue); }
+  .flag-bar span:nth-child(3) { background: var(--co-red); }
+  h1 { font-size: clamp(26px, 4vw, 40px); margin: 4px 0; letter-spacing: -0.02em; }
+  h1 .en { color: var(--co-yellow); }
+  .tagline { color: var(--muted); margin: 0 0 14px; font-size: 15px; }
+
+  .stats-bar { max-width: 920px; margin: 0 auto 14px; padding: 0 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .stat { background: linear-gradient(135deg, var(--panel), var(--panel-2)); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+  .stat .icon { font-size: 24px; }
+  .stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat .val { font-size: 18px; font-weight: 700; }
+  .xp-bar { grid-column: 1 / -1; background: var(--panel); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 10px 14px; }
+  .xp-bar .row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .xp-bar .track { height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+  .xp-bar .fill { height: 100%; background: linear-gradient(90deg, var(--co-yellow), #ff9d00); border-radius: 999px; transition: width 0.5s ease; }
+
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0 12px 20px; }
+  .tab { background: var(--panel); color: var(--text); border: 1px solid rgba(255,255,255,0.06); padding: 10px 16px; border-radius: 999px; cursor: pointer; font-size: 14px; transition: all 0.2s; font-family: inherit; }
+  .tab:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.18); }
+  .tab.active { background: linear-gradient(135deg, var(--co-blue), #1e4bb8); border-color: transparent; box-shadow: 0 6px 18px rgba(0,56,147,0.45); }
+
+  main { max-width: 920px; margin: 0 auto; padding: 0 18px 60px; }
+  .panel { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); margin-bottom: 18px; }
+  .panel h2 { margin: 0 0 4px; font-size: 20px; }
+  .panel .sub { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+  .view { display: none; }
+  .view.active { display: block; animation: fade 0.25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  button.btn { background: var(--panel-2); color: var(--text); border: 1px solid rgba(255,255,255,0.08); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.15s; font-family: inherit; }
+  button.btn:hover { background: #2a2f55; }
+  button.btn.primary { background: linear-gradient(135deg, var(--co-blue), #1e4bb8); border-color: transparent; }
+  button.btn.good { background: rgba(74,222,128,0.15); border-color: rgba(74,222,128,0.4); color: var(--good); }
+  button.btn.bad { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.4); color: var(--bad); }
+  button.btn.gold { background: linear-gradient(135deg, #f59e0b, #d97706); border-color: transparent; color: #1a1100; font-weight: 600; }
+
+  .card-wrap { perspective: 1200px; }
+  .card { position: relative; width: 100%; min-height: 320px; border-radius: 16px; cursor: pointer; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(.2,.8,.2,1); }
+  .card.flipped { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; backface-visibility: hidden; text-align: center; }
+  .face.front { background: linear-gradient(135deg, #243064, #1a2150); border: 1px solid rgba(110,168,255,0.25); }
+  .face.back { background: linear-gradient(135deg, #3a2230, #5a1a28); border: 1px solid rgba(252,209,22,0.35); transform: rotateY(180deg); }
+  .picture { font-size: 80px; line-height: 1; margin-bottom: 14px; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4)); }
+  .word { font-size: clamp(28px, 5vw, 42px); font-weight: 700; letter-spacing: -0.02em; }
+  .ipa { color: var(--muted); font-family: 'Courier New', monospace; margin-top: 6px; }
+  .hint { margin-top: 14px; font-size: 13px; color: var(--muted); }
+  .example { margin-top: 14px; font-style: italic; color: #d9dcff; max-width: 560px; }
+  .speak-btn { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: var(--text); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .speak-btn:hover { background: rgba(255,255,255,0.15); }
+
+  .card-controls { display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  .progress { margin-top: 12px; color: var(--muted); font-size: 13px; text-align: center; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .pill { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 999px; font-size: 13px; cursor: pointer; color: var(--muted); font-family: inherit; }
+  .pill.active { color: var(--text); border-color: var(--co-yellow); background: rgba(252,209,22,0.1); }
+
+  .phrase { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.03); margin-bottom: 10px; border-left: 3px solid var(--co-yellow); position: relative; }
+  .phrase .en-line { font-size: 17px; font-weight: 600; padding-right: 50px; }
+  .phrase .es-line { color: var(--muted); margin-top: 2px; }
+  .phrase .note { margin-top: 8px; font-size: 13px; color: #b9c4ff; background: rgba(110,168,255,0.08); padding: 6px 10px; border-radius: 8px; }
+  .phrase .speak-btn { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 16px; }
+
+  .test-picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .test-card { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 18px; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .test-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .test-card.active { border-color: var(--co-yellow); background: rgba(252,209,22,0.08); }
+  .test-card .ico { font-size: 36px; }
+  .test-card .nm { font-weight: 600; margin-top: 8px; }
+  .test-card .ds { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .quiz-q { font-size: 20px; font-weight: 600; margin-bottom: 14px; }
+  .options { display: grid; gap: 10px; }
+  .option { padding: 12px 14px; background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: all 0.15s; text-align: left; font-size: 15px; color: var(--text); font-family: inherit; }
+  .option:hover { border-color: var(--accent); }
+  .option.correct { background: rgba(74,222,128,0.18); border-color: var(--good); }
+  .option.wrong { background: rgba(248,113,113,0.18); border-color: var(--bad); }
+  .option.pic { display: flex; align-items: center; gap: 12px; font-size: 17px; }
+  .option.pic .emoji { font-size: 32px; }
+
+  .text-input { width: 100%; padding: 14px 16px; font-size: 18px; background: var(--panel-2); color: var(--text); border: 2px solid rgba(255,255,255,0.08); border-radius: 10px; outline: none; font-family: inherit; }
+  .text-input:focus { border-color: var(--accent); }
+  .feedback { margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.right { background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); color: var(--good); }
+  .feedback.wrong { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: var(--bad); }
+
+  .score-badge { display: inline-block; background: var(--panel-2); padding: 6px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); }
+  .streak-bar { display: flex; gap: 4px; margin-top: 14px; justify-content: center; flex-wrap: wrap; }
+  .streak-dot { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+  .streak-dot.hit { background: var(--good); box-shadow: 0 0 8px rgba(74,222,128,0.6); }
+  .streak-dot.miss { background: var(--bad); }
+
+  .tip { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border-left: 3px solid var(--co-red); }
+  .tip h3 { margin: 0 0 6px; font-size: 16px; color: var(--co-yellow); }
+  .tip p { margin: 0; color: #d9dcff; font-size: 14px; }
+  .tip code { background: rgba(0,0,0,0.35); padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; color: #ffe89a; }
+
+  .ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .ach { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px; text-align: center; opacity: 0.45; transition: all 0.3s; }
+  .ach.unlocked { opacity: 1; background: linear-gradient(135deg, rgba(252,209,22,0.12), rgba(206,17,38,0.08)); border-color: rgba(252,209,22,0.4); box-shadow: 0 6px 18px rgba(252,209,22,0.15); }
+  .ach .ach-ico { font-size: 44px; line-height: 1; filter: grayscale(1); }
+  .ach.unlocked .ach-ico { filter: none; }
+  .ach .ach-nm { font-weight: 700; margin-top: 8px; font-size: 14px; }
+  .ach .ach-ds { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .ach .ach-prog { margin-top: 8px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+  .ach .ach-prog .ach-fill { height: 100%; background: var(--co-yellow); transition: width 0.4s ease; }
+  .ach.unlocked .ach-fill { background: var(--good); }
+
+  .goal { background: var(--panel-2); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 14px; }
+  .goal .g-ico { font-size: 28px; }
+  .goal .g-body { flex: 1; }
+  .goal .g-nm { font-weight: 600; }
+  .goal .g-prog { height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+  .goal .g-fill { height: 100%; background: linear-gradient(90deg, var(--co-blue), var(--co-yellow)); transition: width 0.5s ease; }
+  .goal.done .g-fill { background: var(--good); }
+  .goal .g-val { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a1100; padding: 12px 18px; border-radius: 12px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.4); animation: pop 0.4s cubic-bezier(.2,.8,.2,1.2); max-width: 320px; }
+  .toast.xp { background: linear-gradient(135deg, var(--co-blue), #1e4bb8); color: white; }
+  @keyframes pop { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-bar"><span></span><span></span><span></span></div>
+  <h1>Aprende <span class="en">English</span> 🇨🇴 → 🇬🇧</h1>
+  <p class="tagline">Curso interactivo para hispanohablantes de Colombia</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><div class="icon">⭐</div><div><div class="lbl">Nivel</div><div class="val" id="stat-level">1</div></div></div>
+  <div class="stat"><div class="icon">🔥</div><div><div class="lbl">Racha</div><div class="val" id="stat-streak">0 días</div></div></div>
+  <div class="stat"><div class="icon">🏆</div><div><div class="lbl">Logros</div><div class="val" id="stat-ach">0 / 12</div></div></div>
+  <div class="stat"><div class="icon">📚</div><div><div class="lbl">Palabras</div><div class="val" id="stat-words">0</div></div></div>
+  <div class="xp-bar">
+    <div class="row"><span>XP <span id="xp-cur">0</span> / <span id="xp-need">100</span></span><span id="xp-total">Total: 0 XP</span></div>
+    <div class="track"><div class="fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-view="flashcards">🎴 Flashcards</button>
+  <button class="tab" data-view="phrases">💬 Frases</button>
+  <button class="tab" data-view="tests">🧪 Tests</button>
+  <button class="tab" data-view="goals">🎯 Metas</button>
+  <button class="tab" data-view="achievements">🏆 Logros</button>
+  <button class="tab" data-view="tips">💡 Tips</button>
+</nav>
+
+<main>
+  <section class="view active" id="view-flashcards">
+    <div class="panel">
+      <h2>Vocabulario con imágenes</h2>
+      <p class="sub">Toca la tarjeta para voltearla. Toca 🔊 para escuchar la pronunciación.</p>
+      <div class="pills" id="cat-pills"></div>
+      <div class="card-wrap">
+        <div class="card" id="card">
+          <div class="face front">
+            <button class="speak-btn" id="speak-front" title="Escuchar">🔊</button>
+            <div class="picture" id="card-pic">👋</div>
+            <div class="word" id="card-en">Hello</div>
+            <div class="ipa" id="card-ipa">/həˈloʊ/</div>
+            <div class="hint">👆 Toca para ver traducción</div>
+          </div>
+          <div class="face back">
+            <div class="picture" id="card-pic-back">👋</div>
+            <div class="word" id="card-es">Hola</div>
+            <div class="example" id="card-example">"Hello, how are you?"</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-controls">
+        <button class="btn bad" id="btn-dunno">😓 No me la sé</button>
+        <button class="btn primary" id="btn-flip">🔄 Voltear</button>
+        <button class="btn good" id="btn-know">✅ Me la sé (+10 XP)</button>
+      </div>
+      <div class="progress" id="card-progress"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-phrases">
+    <div class="panel">
+      <h2>Frases del día a día</h2>
+      <p class="sub">Notas para evitar errores comunes. Toca 🔊 para escuchar.</p>
+      <div id="phrase-list"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-tests">
+    <div class="panel">
+      <h2>Pon a prueba tu inglés</h2>
+      <p class="sub">Elige un tipo de test. Cada acierto te da XP — encadena respuestas para multiplicar.</p>
+      <div class="test-picker" id="test-picker">
+        <div class="test-card active" data-test="multiple"><div class="ico">📝</div><div class="nm">Múltiple</div><div class="ds">Elige la traducción</div></div>
+        <div class="test-card" data-test="picture"><div class="ico">🖼️</div><div class="nm">Imágenes</div><div class="ds">Asocia palabra y dibujo</div></div>
+        <div class="test-card" data-test="spelling"><div class="ico">⌨️</div><div class="nm">Escritura</div><div class="ds">Escribe la palabra</div></div>
+        <div class="test-card" data-test="listening"><div class="ico">🎧</div><div class="nm">Escucha</div><div class="ds">¿Qué oíste?</div></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <span class="score-badge" id="test-score">Aciertos: 0 / 0</span>
+        <span class="score-badge" id="test-streak-display">Racha: 0 🔥</span>
+      </div>
+      <div id="test-content"></div>
+      <div class="streak-bar" id="streak-bar"></div>
+      <div class="card-controls">
+        <button class="btn primary" id="btn-next-test">Siguiente →</button>
+        <button class="btn" id="btn-reset-test">Reiniciar racha</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-goals">
+    <div class="panel">
+      <h2>Metas diarias</h2>
+      <p class="sub">Cumple tus metas todos los días para mantener tu racha 🔥</p>
+      <div id="goals-list"></div>
+    </div>
+    <div class="panel">
+      <h2>Resumen total</h2>
+      <p class="sub">Tu progreso desde que empezaste.</p>
+      <div id="totals-list"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-achievements">
+    <div class="panel">
+      <h2>Logros desbloqueados</h2>
+      <p class="sub">Completa retos para ganar insignias. ¡Dale parce! 🇨🇴</p>
+      <div class="ach-grid" id="ach-grid"></div>
+    </div>
+    <div class="panel" style="text-align:center;">
+      <button class="btn bad" id="btn-reset-all">⚠️ Borrar todo el progreso</button>
+    </div>
+  </section>
+
+  <section class="view" id="view-tips">
+    <div class="panel">
+      <h2>Tips para colombianos</h2>
+      <p class="sub">Los errores más comunes que cometemos — y cómo evitarlos.</p>
+      <div id="tips-list"></div>
+    </div>
+  </section>
+</main>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<footer>Hecho con ❤️ · ¡Dale, parce, que sí se puede! 🇨🇴</footer>
+
+<script>
+const vocab = {
+  "Saludos": [
+    { en: "Hello", ipa: "/həˈloʊ/", es: "Hola", pic: "👋", ex: "Hello, how are you?" },
+    { en: "Good morning", ipa: "/ɡʊd ˈmɔrnɪŋ/", es: "Buenos días", pic: "🌅", ex: "Good morning, teacher!" },
+    { en: "See you later", ipa: "/siː ju ˈleɪtər/", es: "Hasta luego", pic: "🚶", ex: "See you later, bye!" },
+    { en: "Nice to meet you", ipa: "/naɪs tu mit ju/", es: "Mucho gusto", pic: "🤝", ex: "Nice to meet you, I'm Juan." },
+    { en: "Thank you", ipa: "/ˈθæŋk ju/", es: "Gracias", pic: "🙏", ex: "Thank you so much!" },
+    { en: "Goodbye", ipa: "/ɡʊdˈbaɪ/", es: "Adiós", pic: "👋", ex: "Goodbye, see you tomorrow." },
+  ],
+  "Comida": [
+    { en: "Coffee", ipa: "/ˈkɔfi/", es: "Café", pic: "☕", ex: "I need a cup of coffee." },
+    { en: "Bread", ipa: "/brɛd/", es: "Pan", pic: "🍞", ex: "Fresh bread is the best." },
+    { en: "Apple", ipa: "/ˈæpəl/", es: "Manzana", pic: "🍎", ex: "An apple a day." },
+    { en: "Rice", ipa: "/raɪs/", es: "Arroz", pic: "🍚", ex: "Rice with beans, please." },
+    { en: "Chicken", ipa: "/ˈtʃɪkən/", es: "Pollo", pic: "🍗", ex: "I want chicken for dinner." },
+    { en: "Water", ipa: "/ˈwɔtər/", es: "Agua", pic: "💧", ex: "Can I have some water?" },
+    { en: "Cheese", ipa: "/tʃiz/", es: "Queso", pic: "🧀", ex: "I love cheese on pasta." },
+  ],
+  "Animales": [
+    { en: "Dog", ipa: "/dɔɡ/", es: "Perro", pic: "🐶", ex: "My dog is friendly." },
+    { en: "Cat", ipa: "/kæt/", es: "Gato", pic: "🐱", ex: "The cat is sleeping." },
+    { en: "Horse", ipa: "/hɔrs/", es: "Caballo", pic: "🐴", ex: "I love riding horses." },
+    { en: "Bird", ipa: "/bɜrd/", es: "Pájaro", pic: "🐦", ex: "A bird is singing." },
+    { en: "Fish", ipa: "/fɪʃ/", es: "Pez", pic: "🐟", ex: "The fish swims fast." },
+    { en: "Cow", ipa: "/kaʊ/", es: "Vaca", pic: "🐄", ex: "The cow is in the field." },
+  ],
+  "Familia": [
+    { en: "Mother", ipa: "/ˈmʌðər/", es: "Madre", pic: "👩", ex: "My mother is amazing." },
+    { en: "Father", ipa: "/ˈfɑðər/", es: "Padre", pic: "👨", ex: "My father works hard." },
+    { en: "Daughter", ipa: "/ˈdɔtər/", es: "Hija", pic: "👧", ex: "My daughter is six." },
+    { en: "Son", ipa: "/sʌn/", es: "Hijo", pic: "👦", ex: "My son loves soccer." },
+    { en: "Brother", ipa: "/ˈbrʌðər/", es: "Hermano", pic: "🧑", ex: "My brother is older." },
+    { en: "Sister", ipa: "/ˈsɪstər/", es: "Hermana", pic: "👩‍🦰", ex: "My sister lives in Bogotá." },
+  ],
+  "Trabajo": [
+    { en: "Meeting", ipa: "/ˈmitɪŋ/", es: "Reunión", pic: "💼", ex: "The meeting starts at 9." },
+    { en: "Money", ipa: "/ˈmʌni/", es: "Dinero", pic: "💰", ex: "I need more money." },
+    { en: "Computer", ipa: "/kəmˈpjutər/", es: "Computador", pic: "💻", ex: "My computer is slow." },
+    { en: "Email", ipa: "/ˈimeɪl/", es: "Correo", pic: "📧", ex: "Send me an email." },
+    { en: "Boss", ipa: "/bɔs/", es: "Jefe", pic: "👔", ex: "My boss is kind." },
+  ],
+  "Viajes": [
+    { en: "Airplane", ipa: "/ˈɛrˌpleɪn/", es: "Avión", pic: "✈️", ex: "The airplane is on time." },
+    { en: "Car", ipa: "/kɑr/", es: "Carro", pic: "🚗", ex: "I drive my car to work." },
+    { en: "Hotel", ipa: "/hoʊˈtɛl/", es: "Hotel", pic: "🏨", ex: "This hotel is amazing." },
+    { en: "Beach", ipa: "/bitʃ/", es: "Playa", pic: "🏖️", ex: "Cartagena has great beaches." },
+    { en: "Mountain", ipa: "/ˈmaʊntən/", es: "Montaña", pic: "⛰️", ex: "The mountains are beautiful." },
+    { en: "Map", ipa: "/mæp/", es: "Mapa", pic: "🗺️", ex: "I need a map of the city." },
+  ],
+};
+
+const phrases = [
+  { en: "Could you repeat that, please?", es: "¿Podría repetir eso, por favor?",
+    note: "Úsala sin miedo. Los gringos no se molestan cuando pides que repitan." },
+  { en: "I'm sorry, I don't understand.", es: "Lo siento, no entiendo.",
+    note: "Más natural que \"I don't know what you said\", que suena cortante." },
+  { en: "How do you say ___ in English?", es: "¿Cómo se dice ___ en inglés?",
+    note: "Frase dorada para aprender. Usa \"say\", no \"tell\"." },
+  { en: "I'm from Colombia.", es: "Soy de Colombia.",
+    note: "Pronuncia \"Colombia\" con O corta: /kəˈlʌmbiə/, no \"Co-LOM-bia\" a la española." },
+  { en: "Can I have a coffee, please?", es: "¿Me puede dar un café, por favor?",
+    note: "No traduzcas \"¿me regala?\" literal — \"give me\" suena brusco." },
+  { en: "I've been living here for two years.", es: "Llevo dos años viviendo aquí.",
+    note: "Present Perfect Continuous: \"llevo\" + tiempo = \"I've been\" + -ing + \"for\" + tiempo." },
+  { en: "Actually, I disagree.", es: "De hecho, no estoy de acuerdo.",
+    note: "Falso amigo: \"actually\" NO es \"actualmente\". Es \"en realidad\". Actualmente = currently." },
+  { en: "I'm embarrassed.", es: "Estoy avergonzado(a).",
+    note: "⚠️ \"Embarrassed\" ≠ embarazada. Embarazada = pregnant. Error muy común 😅." },
+  { en: "Let me think about it.", es: "Déjame pensarlo.",
+    note: "Perfecta para ganar tiempo en una conversación sin quedarse callado." },
+  { en: "Thank you so much, I appreciate it.", es: "Muchas gracias, lo aprecio.",
+    note: "Más cálido que un simple \"thanks\". Los colombianos somos cálidos — que se note." },
+];
+
+const tips = [
+  { t: "La 'H' sí se pronuncia",
+    d: "En español la H es muda. En inglés suena como J suave. <code>Hello</code> NO es \"elou\", es \"jelou\"." },
+  { t: "Vocales cortas vs largas",
+    d: "<code>ship</code> (barco) y <code>sheep</code> (oveja) NO suenan igual. Corta (/ɪ/) vs larga (/iː/)." },
+  { t: "La 'TH' existe y hay que practicarla",
+    d: "Saca la lengua entre los dientes. <code>think</code>, <code>three</code>, <code>thank you</code>." },
+  { t: "Falsos amigos asesinos",
+    d: "<code>Actually</code>=en realidad. <code>Embarrassed</code>=avergonzado. <code>Exit</code>=salida. <code>Library</code>=biblioteca." },
+  { t: "No traduzcas palabra por palabra",
+    d: "\"Tengo hambre\" NO es \"I have hunger\" — es <code>I'm hungry</code>. \"Tengo 25 años\" = <code>I'm 25 years old</code>." },
+  { t: "La 'S' al final sí se dice",
+    d: "Tendemos a comernos las S. En inglés son cruciales: marcan plural y tercera persona." },
+  { t: "No uses doble negación",
+    d: "\"No tengo nada\" = <code>I don't have anything</code>, NUNCA \"I don't have nothing\"." },
+  { t: "Practica con música",
+    d: "Busca canciones que te gusten (Juanes, Shakira, Carlos Vives) y compara letras. Divertido y familiar." },
+];
+
+const achievements = [
+  { id: "first_step", ico: "👣", nm: "Primer paso", ds: "Revisa tu primera tarjeta", goal: 1, stat: "cardsReviewed" },
+  { id: "vocab_10", ico: "🥉", nm: "Vocabulario Bronce", ds: "Revisa 10 tarjetas", goal: 10, stat: "cardsReviewed" },
+  { id: "vocab_50", ico: "🥈", nm: "Vocabulario Plata", ds: "Revisa 50 tarjetas", goal: 50, stat: "cardsReviewed" },
+  { id: "vocab_100", ico: "🥇", nm: "Vocabulario Oro", ds: "Revisa 100 tarjetas", goal: 100, stat: "cardsReviewed" },
+  { id: "quiz_10", ico: "🧠", nm: "Mente despierta", ds: "10 respuestas correctas", goal: 10, stat: "testsCorrect" },
+  { id: "quiz_50", ico: "🎓", nm: "Estudiante aplicado", ds: "50 respuestas correctas", goal: 50, stat: "testsCorrect" },
+  { id: "speller", ico: "⌨️", nm: "Buen ortógrafo", ds: "Escribe 5 palabras correctas", goal: 5, stat: "spellingCorrect" },
+  { id: "good_ear", ico: "👂", nm: "Buen oído", ds: "Acierta 5 escuchas", goal: 5, stat: "listeningCorrect" },
+  { id: "streak_3", ico: "🔥", nm: "En racha", ds: "3 días seguidos", goal: 3, stat: "streak" },
+  { id: "streak_7", ico: "💪", nm: "Una semana fuerte", ds: "7 días seguidos", goal: 7, stat: "streak" },
+  { id: "streak_30", ico: "🏆", nm: "Maratonista", ds: "30 días seguidos", goal: 30, stat: "streak" },
+  { id: "level_5", ico: "⭐", nm: "Nivel 5", ds: "Alcanza el nivel 5", goal: 5, stat: "level" },
+];
+
+const STORAGE_KEY = "aprende_ingles_progress_v1";
+const defaultState = {
+  xp: 0, cardsReviewed: 0, testsCorrect: 0, testsTotal: 0,
+  spellingCorrect: 0, listeningCorrect: 0, streak: 0, lastDay: null,
+  todayXp: 0, todayCards: 0, todayTests: 0,
+  unlockedAchievements: [], bestQuizStreak: 0,
+};
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { ...defaultState };
+    return { ...defaultState, ...JSON.parse(raw) };
+  } catch { return { ...defaultState }; }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+}
+function checkStreak() {
+  const today = todayStr();
+  if (state.lastDay === today) return;
+  if (state.lastDay) {
+    const last = new Date(state.lastDay);
+    const now = new Date(today);
+    const diff = Math.round((now - last) / 86400000);
+    if (diff === 1) state.streak += 1;
+    else if (diff > 1) state.streak = 1;
+  } else { state.streak = 1; }
+  state.lastDay = today;
+  state.todayXp = 0; state.todayCards = 0; state.todayTests = 0;
+  saveState();
+}
+checkStreak();
+
+const levelFromXp = xp => Math.floor(xp / 100) + 1;
+const xpInLevel = xp => xp % 100;
+
+function awardXp(amount, label) {
+  const oldL = levelFromXp(state.xp);
+  state.xp += amount;
+  state.todayXp += amount;
+  const newL = levelFromXp(state.xp);
+  saveState(); refreshStats();
+  toast(`+${amount} XP${label ? " · " + label : ""}`, "xp");
+  if (newL > oldL) setTimeout(() => toast(`🎉 ¡Subiste al nivel ${newL}!`), 500);
+  checkAchievements();
+  refreshGoals();
+}
+
+function refreshStats() {
+  document.getElementById("stat-level").textContent = levelFromXp(state.xp);
+  document.getElementById("stat-streak").textContent = state.streak + (state.streak === 1 ? " día" : " días");
+  document.getElementById("stat-ach").textContent = `${state.unlockedAchievements.length} / ${achievements.length}`;
+  document.getElementById("stat-words").textContent = state.cardsReviewed;
+  const cur = xpInLevel(state.xp);
+  document.getElementById("xp-cur").textContent = cur;
+  document.getElementById("xp-need").textContent = 100;
+  document.getElementById("xp-total").textContent = `Total: ${state.xp} XP`;
+  document.getElementById("xp-fill").style.width = cur + "%";
+}
+
+function toast(msg, kind) {
+  const t = document.createElement("div");
+  t.className = "toast" + (kind === "xp" ? " xp" : "");
+  t.textContent = msg;
+  document.getElementById("toast-wrap").appendChild(t);
+  setTimeout(() => {
+    t.style.transition = "opacity 0.4s, transform 0.4s";
+    t.style.opacity = "0"; t.style.transform = "translateY(20px)";
+    setTimeout(() => t.remove(), 400);
+  }, 2200);
+}
+
+function speak(text, rate) {
+  if (!window.speechSynthesis) return;
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US"; u.rate = rate || 0.9;
+    window.speechSynthesis.speak(u);
+  } catch {}
+}
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const btn = e.target.closest(".tab");
+  if (!btn) return;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("view-" + btn.dataset.view).classList.add("active");
+  if (btn.dataset.view === "achievements") renderAchievements();
+  if (btn.dataset.view === "goals") refreshGoals();
+});
+
+let currentCategory = "Saludos";
+let currentIndex = 0;
+const pillsEl = document.getElementById("cat-pills");
+Object.keys(vocab).forEach(cat => {
+  const p = document.createElement("button");
+  p.className = "pill" + (cat === currentCategory ? " active" : "");
+  p.textContent = cat;
+  p.onclick = () => {
+    currentCategory = cat; currentIndex = 0;
+    document.querySelectorAll(".pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    renderCard();
+  };
+  pillsEl.appendChild(p);
+});
+
+const cardEl = document.getElementById("card");
+function renderCard() {
+  const list = vocab[currentCategory];
+  const item = list[currentIndex];
+  document.getElementById("card-pic").textContent = item.pic;
+  document.getElementById("card-pic-back").textContent = item.pic;
+  document.getElementById("card-en").textContent = item.en;
+  document.getElementById("card-ipa").textContent = item.ipa;
+  document.getElementById("card-es").textContent = item.es;
+  document.getElementById("card-example").textContent = '"' + item.ex + '"';
+  cardEl.classList.remove("flipped");
+  document.getElementById("card-progress").textContent =
+    `Tarjeta ${currentIndex + 1} de ${list.length} en "${currentCategory}"`;
+}
+cardEl.onclick = (e) => {
+  if (e.target.closest(".speak-btn")) return;
+  cardEl.classList.toggle("flipped");
+};
+document.getElementById("speak-front").onclick = (e) => {
+  e.stopPropagation();
+  speak(vocab[currentCategory][currentIndex].en);
+};
+document.getElementById("btn-flip").onclick = () => cardEl.classList.toggle("flipped");
+
+function advance(known) {
+  state.cardsReviewed++; state.todayCards++;
+  saveState();
+  awardXp(known ? 10 : 5, known ? "¡bien!" : "sigue practicando");
+  const list = vocab[currentCategory];
+  currentIndex = (currentIndex + 1) % list.length;
+  renderCard();
+}
+document.getElementById("btn-know").onclick = () => advance(true);
+document.getElementById("btn-dunno").onclick = () => advance(false);
+renderCard();
+
+const phraseList = document.getElementById("phrase-list");
+phrases.forEach(p => {
+  const div = document.createElement("div");
+  div.className = "phrase";
+  div.innerHTML = `
+    <button class="speak-btn" title="Escuchar">🔊</button>
+    <div class="en-line">🇬🇧 ${p.en}</div>
+    <div class="es-line">🇨🇴 ${p.es}</div>
+    <div class="note">💡 ${p.note}</div>`;
+  div.querySelector(".speak-btn").onclick = () => speak(p.en);
+  phraseList.appendChild(div);
+});
+
+const allWords = Object.values(vocab).flat();
+let currentTest = "multiple";
+let testStreak = 0;
+let recentResults = [];
+
+document.getElementById("test-picker").addEventListener("click", e => {
+  const c = e.target.closest(".test-card");
+  if (!c) return;
+  document.querySelectorAll(".test-card").forEach(x => x.classList.remove("active"));
+  c.classList.add("active");
+  currentTest = c.dataset.test;
+  newTest();
+});
+
+const shuffle = a => a.slice().sort(() => Math.random() - 0.5);
+
+function updateTestUI() {
+  document.getElementById("test-score").textContent = `Aciertos: ${state.testsCorrect} / ${state.testsTotal}`;
+  document.getElementById("test-streak-display").textContent = `Racha: ${testStreak} 🔥`;
+  const bar = document.getElementById("streak-bar");
+  bar.innerHTML = "";
+  recentResults.slice(-12).forEach(r => {
+    const d = document.createElement("div");
+    d.className = "streak-dot " + (r ? "hit" : "miss");
+    bar.appendChild(d);
+  });
+}
+
+function recordResult(isRight, baseXp, statKey) {
+  state.testsTotal++;
+  state.todayTests++;
+  if (isRight) {
+    state.testsCorrect++;
+    if (statKey) state[statKey]++;
+    testStreak++;
+    if (testStreak > state.bestQuizStreak) state.bestQuizStreak = testStreak;
+    awardXp(baseXp + Math.min(testStreak, 5) * 2, testStreak > 1 ? `racha ${testStreak}!` : "correcto");
+  } else {
+    testStreak = 0;
+    saveState();
+  }
+  recentResults.push(isRight);
+  updateTestUI();
+}
+
+function newTest() {
+  if (currentTest === "multiple") renderMultiple();
+  else if (currentTest === "picture") renderPicture();
+  else if (currentTest === "spelling") renderSpelling();
+  else if (currentTest === "listening") renderListening();
+  updateTestUI();
+}
+
+function renderMultiple() {
+  const correct = allWords[Math.floor(Math.random() * allWords.length)];
+  const distractors = shuffle(allWords.filter(w => w.es !== correct.es)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+  const askEnglish = Math.random() < 0.5;
+  const c = document.getElementById("test-content");
+  c.innerHTML = `
+    <div class="quiz-q">${askEnglish
+      ? `¿Cómo se dice "<span style="color:var(--co-yellow)">${correct.es}</span>" en inglés?`
+      : `¿Qué significa "<span style="color:var(--co-yellow)">${correct.en}</span>"?`}
+    </div>
+    <div class="options" id="opts"></div>`;
+  const optsEl = c.querySelector("#opts");
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "option";
+    b.textContent = askEnglish ? opt.en : opt.es;
+    b.onclick = () => {
+      if (b.classList.contains("correct") || b.classList.contains("wrong")) return;
+      const ok = (askEnglish ? opt.en : opt.es) === (askEnglish ? correct.en : correct.es);
+      if (ok) b.classList.add("correct");
+      else {
+        b.classList.add("wrong");
+        [...optsEl.children].forEach(x => {
+          if (x.textContent === (askEnglish ? correct.en : correct.es)) x.classList.add("correct");
+        });
+      }
+      recordResult(ok, 15);
+    };
+    optsEl.appendChild(b);
+  });
+}
+
+function renderPicture() {
+  const correct = allWords[Math.floor(Math.random() * allWords.length)];
+  const distractors = shuffle(allWords.filter(w => w.pic !== correct.pic)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+  const c = document.getElementById("test-content");
+  c.innerHTML = `
+    <div class="quiz-q">¿Qué imagen corresponde a "<span style="color:var(--co-yellow)">${correct.en}</span>"?</div>
+    <div class="options" id="opts"></div>`;
+  const optsEl = c.querySelector("#opts");
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "option pic";
+    b.innerHTML = `<span class="emoji">${opt.pic}</span><span>${opt.es}</span>`;
+    b.onclick = () => {
+      if (b.classList.contains("correct") || b.classList.contains("wrong")) return;
+      const ok = opt.pic === correct.pic;
+      if (ok) b.classList.add("correct");
+      else {
+        b.classList.add("wrong");
+        [...optsEl.children].forEach(child => {
+          if (child.querySelector(".emoji").textContent === correct.pic) child.classList.add("correct");
+        });
+      }
+      recordResult(ok, 15);
+    };
+    optsEl.appendChild(b);
+  });
+}
+
+function renderSpelling() {
+  const correct = allWords[Math.floor(Math.random() * allWords.length)];
+  const c = document.getElementById("test-content");
+  c.innerHTML = `
+    <div class="quiz-q">Escribe en inglés: <span style="color:var(--co-yellow)">${correct.es}</span> ${correct.pic}</div>
+    <input class="text-input" id="spell-input" placeholder="Escribe aquí..." autocomplete="off" autocapitalize="off" spellcheck="false" />
+    <div class="card-controls" style="margin-top:12px;">
+      <button class="btn primary" id="spell-check">Verificar</button>
+      <button class="btn" id="spell-hint">💡 Pista (-5 XP)</button>
+    </div>
+    <div class="feedback" id="spell-fb"></div>`;
+  const input = c.querySelector("#spell-input");
+  setTimeout(() => input.focus(), 50);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  c.querySelector("#spell-check").onclick = check;
+  c.querySelector("#spell-hint").onclick = () => {
+    const half = correct.en.slice(0, Math.ceil(correct.en.length / 2));
+    input.value = half;
+    state.xp = Math.max(0, state.xp - 5);
+    saveState(); refreshStats();
+    input.focus();
+  };
+  function check() {
+    const fb = c.querySelector("#spell-fb");
+    const val = input.value.trim().toLowerCase();
+    const ok = val === correct.en.toLowerCase();
+    fb.classList.add("show");
+    if (ok) {
+      fb.className = "feedback show right";
+      fb.textContent = `✅ ¡Correcto! "${correct.en}" significa "${correct.es}".`;
+      recordResult(true, 25, "spellingCorrect");
+    } else {
+      fb.className = "feedback show wrong";
+      fb.textContent = `❌ La respuesta correcta era: ${correct.en}`;
+      recordResult(false, 0);
+    }
+    input.disabled = true;
+    c.querySelector("#spell-check").disabled = true;
+  }
+}
+
+function renderListening() {
+  const correct = allWords[Math.floor(Math.random() * allWords.length)];
+  const distractors = shuffle(allWords.filter(w => w.en !== correct.en)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+  const c = document.getElementById("test-content");
+  c.innerHTML = `
+    <div class="quiz-q">🎧 Escucha y elige la palabra correcta</div>
+    <div style="text-align:center; margin: 10px 0 20px;">
+      <button class="btn gold" id="play-audio" style="font-size:18px; padding:14px 24px;">▶️ Reproducir</button>
+      <button class="btn" id="play-slow" style="margin-left:8px;">🐢 Lento</button>
+    </div>
+    <div class="options" id="opts"></div>`;
+  c.querySelector("#play-audio").onclick = () => speak(correct.en, 0.9);
+  c.querySelector("#play-slow").onclick = () => speak(correct.en, 0.55);
+  setTimeout(() => speak(correct.en, 0.9), 250);
+  const optsEl = c.querySelector("#opts");
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "option";
+    b.textContent = opt.en;
+    b.onclick = () => {
+      if (b.classList.contains("correct") || b.classList.contains("wrong")) return;
+      const ok = opt.en === correct.en;
+      if (ok) b.classList.add("correct");
+      else {
+        b.classList.add("wrong");
+        [...optsEl.children].forEach(x => {
+          if (x.textContent === correct.en) x.classList.add("correct");
+        });
+      }
+      recordResult(ok, 20, "listeningCorrect");
+    };
+    optsEl.appendChild(b);
+  });
+}
+
+document.getElementById("btn-next-test").onclick = newTest;
+document.getElementById("btn-reset-test").onclick = () => {
+  testStreak = 0; recentResults = [];
+  newTest();
+};
+newTest();
+
+const dailyGoals = [
+  { ico: "⚡", nm: "Ganar 50 XP hoy", target: 50, key: "todayXp" },
+  { ico: "🎴", nm: "Revisar 10 tarjetas hoy", target: 10, key: "todayCards" },
+  { ico: "🧪", nm: "Hacer 5 tests hoy", target: 5, key: "todayTests" },
+];
+
+function refreshGoals() {
+  checkStreak();
+  const list = document.getElementById("goals-list");
+  list.innerHTML = "";
+  dailyGoals.forEach(g => {
+    const cur = Math.min(state[g.key] || 0, g.target);
+    const done = cur >= g.target;
+    const div = document.createElement("div");
+    div.className = "goal" + (done ? " done" : "");
+    div.innerHTML = `
+      <div class="g-ico">${g.ico}</div>
+      <div class="g-body">
+        <div class="g-nm">${g.nm} ${done ? "✅" : ""}</div>
+        <div class="g-prog"><div class="g-fill" style="width:${cur/g.target*100}%"></div></div>
+        <div class="g-val">${cur} / ${g.target}</div>
+      </div>`;
+    list.appendChild(div);
+  });
+
+  document.getElementById("totals-list").innerHTML = `
+    <div class="goal"><div class="g-ico">⭐</div><div class="g-body"><div class="g-nm">XP total</div><div class="g-val">${state.xp} XP</div></div></div>
+    <div class="goal"><div class="g-ico">🎴</div><div class="g-body"><div class="g-nm">Tarjetas revisadas</div><div class="g-val">${state.cardsReviewed}</div></div></div>
+    <div class="goal"><div class="g-ico">✅</div><div class="g-body"><div class="g-nm">Aciertos en tests</div><div class="g-val">${state.testsCorrect} de ${state.testsTotal}</div></div></div>
+    <div class="goal"><div class="g-ico">🔥</div><div class="g-body"><div class="g-nm">Mejor racha en tests</div><div class="g-val">${state.bestQuizStreak} respuestas seguidas</div></div></div>`;
+}
+
+function getStat(key) {
+  if (key === "level") return levelFromXp(state.xp);
+  return state[key] || 0;
+}
+function checkAchievements() {
+  achievements.forEach(a => {
+    if (state.unlockedAchievements.includes(a.id)) return;
+    if (getStat(a.stat) >= a.goal) {
+      state.unlockedAchievements.push(a.id);
+      saveState();
+      toast(`🏆 ¡Logro! ${a.nm}`);
+    }
+  });
+  refreshStats();
+}
+function renderAchievements() {
+  const grid = document.getElementById("ach-grid");
+  grid.innerHTML = "";
+  achievements.forEach(a => {
+    const cur = Math.min(getStat(a.stat), a.goal);
+    const unlocked = state.unlockedAchievements.includes(a.id);
+    const div = document.createElement("div");
+    div.className = "ach" + (unlocked ? " unlocked" : "");
+    div.innerHTML = `
+      <div class="ach-ico">${a.ico}</div>
+      <div class="ach-nm">${a.nm}</div>
+      <div class="ach-ds">${a.ds}</div>
+      <div class="ach-prog"><div class="ach-fill" style="width:${cur/a.goal*100}%"></div></div>
+      <div class="ach-ds" style="margin-top:4px;">${cur} / ${a.goal}</div>`;
+    grid.appendChild(div);
+  });
+}
+document.getElementById("btn-reset-all").onclick = () => {
+  if (confirm("¿Seguro que quieres borrar TODO tu progreso? No se puede deshacer.")) {
+    localStorage.removeItem(STORAGE_KEY);
+    state = { ...defaultState };
+    checkStreak();
+    refreshStats();
+    renderAchievements();
+    refreshGoals();
+    toast("Progreso reiniciado");
+  }
+};
+
+const tipsList = document.getElementById("tips-list");
+tips.forEach(t => {
+  const div = document.createElement("div");
+  div.className = "tip";
+  div.innerHTML = `<h3>${t.t}</h3><p>${t.d}</p>`;
+  tipsList.appendChild(div);
+});
+
+refreshStats();
+checkAchievements();
+refreshGoals();
+</script>
+
+</body>
+</html>
