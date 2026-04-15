@@ -82,12 +82,17 @@
   .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .pill { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 999px; font-size: 13px; cursor: pointer; color: var(--muted); font-family: inherit; }
   .pill.active { color: var(--text); border-color: var(--co-yellow); background: rgba(252,209,22,0.1); }
+  .pill.work { border-color: rgba(206,17,38,0.4); color: #ffb3b3; }
+  .pill.work.active { border-color: var(--co-red); background: rgba(206,17,38,0.15); color: #ffe0e0; }
 
   .phrase { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.03); margin-bottom: 10px; border-left: 3px solid var(--co-yellow); position: relative; }
+  .phrase.work { border-left-color: var(--co-red); }
   .phrase .en-line { font-size: 17px; font-weight: 600; padding-right: 50px; }
   .phrase .es-line { color: var(--muted); margin-top: 2px; }
   .phrase .note { margin-top: 8px; font-size: 13px; color: #b9c4ff; background: rgba(110,168,255,0.08); padding: 6px 10px; border-radius: 8px; }
   .phrase .speak-btn { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 16px; }
+  .phrase-section-title { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 18px 0 8px; }
+  .phrase-section-title:first-child { margin-top: 0; }
 
   .test-picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
   .test-card { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 18px; cursor: pointer; text-align: center; transition: all 0.2s; }
@@ -96,6 +101,10 @@
   .test-card .ico { font-size: 36px; }
   .test-card .nm { font-weight: 600; margin-top: 8px; }
   .test-card .ds { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .test-mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .mode-pill { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; color: var(--muted); font-family: inherit; }
+  .mode-pill.active { color: var(--text); border-color: var(--accent); background: rgba(110,168,255,0.12); }
 
   .quiz-q { font-size: 20px; font-weight: 600; margin-bottom: 14px; }
   .options { display: grid; gap: 10px; }
@@ -123,6 +132,8 @@
   .tip h3 { margin: 0 0 6px; font-size: 16px; color: var(--co-yellow); }
   .tip p { margin: 0; color: #d9dcff; font-size: 14px; }
   .tip code { background: rgba(0,0,0,0.35); padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; color: #ffe89a; }
+  .tip.advanced { border-left-color: var(--accent); }
+  .tip.advanced h3 { color: var(--accent); }
 
   .ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
   .ach { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px; text-align: center; opacity: 0.45; transition: all 0.3s; }
@@ -149,6 +160,8 @@
   .toast.xp { background: linear-gradient(135deg, var(--co-blue), #1e4bb8); color: white; }
   @keyframes pop { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
+  .level-badge { display: inline-block; background: rgba(206,17,38,0.15); border: 1px solid rgba(206,17,38,0.4); color: #ffb3b3; padding: 2px 8px; border-radius: 999px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
 </style>
 </head>
@@ -157,13 +170,13 @@
 <header>
   <div class="flag-bar"><span></span><span></span><span></span></div>
   <h1>Aprende <span class="en">English</span> 🇨🇴 → 🇬🇧</h1>
-  <p class="tagline">Curso interactivo para hispanohablantes de Colombia</p>
+  <p class="tagline">Curso interactivo · Básico, intermedio y vocabulario de fábrica</p>
 </header>
 
 <div class="stats-bar">
   <div class="stat"><div class="icon">⭐</div><div><div class="lbl">Nivel</div><div class="val" id="stat-level">1</div></div></div>
   <div class="stat"><div class="icon">🔥</div><div><div class="lbl">Racha</div><div class="val" id="stat-streak">0 días</div></div></div>
-  <div class="stat"><div class="icon">🏆</div><div><div class="lbl">Logros</div><div class="val" id="stat-ach">0 / 12</div></div></div>
+  <div class="stat"><div class="icon">🏆</div><div><div class="lbl">Logros</div><div class="val" id="stat-ach">0 / 14</div></div></div>
   <div class="stat"><div class="icon">📚</div><div><div class="lbl">Palabras</div><div class="val" id="stat-words">0</div></div></div>
   <div class="xp-bar">
     <div class="row"><span>XP <span id="xp-cur">0</span> / <span id="xp-need">100</span></span><span id="xp-total">Total: 0 XP</span></div>
@@ -183,8 +196,8 @@
 <main>
   <section class="view active" id="view-flashcards">
     <div class="panel">
-      <h2>Vocabulario con imágenes</h2>
-      <p class="sub">Toca la tarjeta para voltearla. Toca 🔊 para escuchar la pronunciación.</p>
+      <h2>Vocabulario</h2>
+      <p class="sub">Categorías rojas <span style="color:var(--co-red)">●</span> son específicas para trabajo en fábrica de pintura. Toca 🔊 para escuchar.</p>
       <div class="pills" id="cat-pills"></div>
       <div class="card-wrap">
         <div class="card" id="card">
@@ -213,8 +226,8 @@
 
   <section class="view" id="view-phrases">
     <div class="panel">
-      <h2>Frases del día a día</h2>
-      <p class="sub">Notas para evitar errores comunes. Toca 🔊 para escuchar.</p>
+      <h2>Frases útiles</h2>
+      <p class="sub">Frases generales y específicas de la fábrica. Toca 🔊 para escuchar.</p>
       <div id="phrase-list"></div>
     </div>
   </section>
@@ -222,13 +235,22 @@
   <section class="view" id="view-tests">
     <div class="panel">
       <h2>Pon a prueba tu inglés</h2>
-      <p class="sub">Elige un tipo de test. Cada acierto te da XP — encadena respuestas para multiplicar.</p>
+      <p class="sub">Filtra por categoría y elige el tipo de test. Acierta seguido para multiplicar XP.</p>
+
+      <div class="test-mode-toggle" id="test-mode-toggle">
+        <button class="mode-pill active" data-mode="all">🌐 Todo</button>
+        <button class="mode-pill" data-mode="general">📚 Solo general</button>
+        <button class="mode-pill" data-mode="work">🏭 Solo trabajo</button>
+      </div>
+
       <div class="test-picker" id="test-picker">
         <div class="test-card active" data-test="multiple"><div class="ico">📝</div><div class="nm">Múltiple</div><div class="ds">Elige la traducción</div></div>
         <div class="test-card" data-test="picture"><div class="ico">🖼️</div><div class="nm">Imágenes</div><div class="ds">Asocia palabra y dibujo</div></div>
         <div class="test-card" data-test="spelling"><div class="ico">⌨️</div><div class="nm">Escritura</div><div class="ds">Escribe la palabra</div></div>
         <div class="test-card" data-test="listening"><div class="ico">🎧</div><div class="nm">Escucha</div><div class="ds">¿Qué oíste?</div></div>
+        <div class="test-card" data-test="sentence"><div class="ico">🧩</div><div class="nm">Oración</div><div class="ds">Completa la frase</div></div>
       </div>
+
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
         <span class="score-badge" id="test-score">Aciertos: 0 / 0</span>
         <span class="score-badge" id="test-streak-display">Racha: 0 🔥</span>
@@ -268,8 +290,8 @@
 
   <section class="view" id="view-tips">
     <div class="panel">
-      <h2>Tips para colombianos</h2>
-      <p class="sub">Los errores más comunes que cometemos — y cómo evitarlos.</p>
+      <h2>Tips de pronunciación y gramática</h2>
+      <p class="sub">Errores comunes de colombianos + tips intermedios.</p>
       <div id="tips-list"></div>
     </div>
   </section>
@@ -281,96 +303,222 @@
 
 <script>
 const vocab = {
-  "Saludos": [
+  "Saludos": { type: "general", words: [
     { en: "Hello", ipa: "/həˈloʊ/", es: "Hola", pic: "👋", ex: "Hello, how are you?" },
     { en: "Good morning", ipa: "/ɡʊd ˈmɔrnɪŋ/", es: "Buenos días", pic: "🌅", ex: "Good morning, teacher!" },
     { en: "See you later", ipa: "/siː ju ˈleɪtər/", es: "Hasta luego", pic: "🚶", ex: "See you later, bye!" },
     { en: "Nice to meet you", ipa: "/naɪs tu mit ju/", es: "Mucho gusto", pic: "🤝", ex: "Nice to meet you, I'm Juan." },
     { en: "Thank you", ipa: "/ˈθæŋk ju/", es: "Gracias", pic: "🙏", ex: "Thank you so much!" },
     { en: "Goodbye", ipa: "/ɡʊdˈbaɪ/", es: "Adiós", pic: "👋", ex: "Goodbye, see you tomorrow." },
-  ],
-  "Comida": [
+  ]},
+  "Comida": { type: "general", words: [
     { en: "Coffee", ipa: "/ˈkɔfi/", es: "Café", pic: "☕", ex: "I need a cup of coffee." },
     { en: "Bread", ipa: "/brɛd/", es: "Pan", pic: "🍞", ex: "Fresh bread is the best." },
     { en: "Apple", ipa: "/ˈæpəl/", es: "Manzana", pic: "🍎", ex: "An apple a day." },
     { en: "Rice", ipa: "/raɪs/", es: "Arroz", pic: "🍚", ex: "Rice with beans, please." },
     { en: "Chicken", ipa: "/ˈtʃɪkən/", es: "Pollo", pic: "🍗", ex: "I want chicken for dinner." },
     { en: "Water", ipa: "/ˈwɔtər/", es: "Agua", pic: "💧", ex: "Can I have some water?" },
-    { en: "Cheese", ipa: "/tʃiz/", es: "Queso", pic: "🧀", ex: "I love cheese on pasta." },
-  ],
-  "Animales": [
-    { en: "Dog", ipa: "/dɔɡ/", es: "Perro", pic: "🐶", ex: "My dog is friendly." },
-    { en: "Cat", ipa: "/kæt/", es: "Gato", pic: "🐱", ex: "The cat is sleeping." },
-    { en: "Horse", ipa: "/hɔrs/", es: "Caballo", pic: "🐴", ex: "I love riding horses." },
-    { en: "Bird", ipa: "/bɜrd/", es: "Pájaro", pic: "🐦", ex: "A bird is singing." },
-    { en: "Fish", ipa: "/fɪʃ/", es: "Pez", pic: "🐟", ex: "The fish swims fast." },
-    { en: "Cow", ipa: "/kaʊ/", es: "Vaca", pic: "🐄", ex: "The cow is in the field." },
-  ],
-  "Familia": [
+  ]},
+  "Familia": { type: "general", words: [
     { en: "Mother", ipa: "/ˈmʌðər/", es: "Madre", pic: "👩", ex: "My mother is amazing." },
     { en: "Father", ipa: "/ˈfɑðər/", es: "Padre", pic: "👨", ex: "My father works hard." },
     { en: "Daughter", ipa: "/ˈdɔtər/", es: "Hija", pic: "👧", ex: "My daughter is six." },
     { en: "Son", ipa: "/sʌn/", es: "Hijo", pic: "👦", ex: "My son loves soccer." },
     { en: "Brother", ipa: "/ˈbrʌðər/", es: "Hermano", pic: "🧑", ex: "My brother is older." },
     { en: "Sister", ipa: "/ˈsɪstər/", es: "Hermana", pic: "👩‍🦰", ex: "My sister lives in Bogotá." },
-  ],
-  "Trabajo": [
-    { en: "Meeting", ipa: "/ˈmitɪŋ/", es: "Reunión", pic: "💼", ex: "The meeting starts at 9." },
-    { en: "Money", ipa: "/ˈmʌni/", es: "Dinero", pic: "💰", ex: "I need more money." },
-    { en: "Computer", ipa: "/kəmˈpjutər/", es: "Computador", pic: "💻", ex: "My computer is slow." },
-    { en: "Email", ipa: "/ˈimeɪl/", es: "Correo", pic: "📧", ex: "Send me an email." },
-    { en: "Boss", ipa: "/bɔs/", es: "Jefe", pic: "👔", ex: "My boss is kind." },
-  ],
-  "Viajes": [
-    { en: "Airplane", ipa: "/ˈɛrˌpleɪn/", es: "Avión", pic: "✈️", ex: "The airplane is on time." },
-    { en: "Car", ipa: "/kɑr/", es: "Carro", pic: "🚗", ex: "I drive my car to work." },
-    { en: "Hotel", ipa: "/hoʊˈtɛl/", es: "Hotel", pic: "🏨", ex: "This hotel is amazing." },
-    { en: "Beach", ipa: "/bitʃ/", es: "Playa", pic: "🏖️", ex: "Cartagena has great beaches." },
-    { en: "Mountain", ipa: "/ˈmaʊntən/", es: "Montaña", pic: "⛰️", ex: "The mountains are beautiful." },
-    { en: "Map", ipa: "/mæp/", es: "Mapa", pic: "🗺️", ex: "I need a map of the city." },
-  ],
+  ]},
+  "Verbos comunes": { type: "general", words: [
+    { en: "To work", ipa: "/tu wɜrk/", es: "Trabajar", pic: "🔨", ex: "I work in a factory." },
+    { en: "To start", ipa: "/tu stɑrt/", es: "Empezar", pic: "▶️", ex: "We start at six AM." },
+    { en: "To finish", ipa: "/tu ˈfɪnɪʃ/", es: "Terminar", pic: "🏁", ex: "I finish my shift at two." },
+    { en: "To help", ipa: "/tu hɛlp/", es: "Ayudar", pic: "🤲", ex: "Can you help me, please?" },
+    { en: "To need", ipa: "/tu nid/", es: "Necesitar", pic: "🙏", ex: "I need a break." },
+    { en: "To bring", ipa: "/tu brɪŋ/", es: "Traer", pic: "📦", ex: "Bring me the box, please." },
+    { en: "To check", ipa: "/tu tʃɛk/", es: "Revisar / verificar", pic: "✔️", ex: "Check the part for damage." },
+    { en: "To fix", ipa: "/tu fɪks/", es: "Arreglar", pic: "🔧", ex: "Can you fix this?" },
+  ]},
+  "Tiempo y números": { type: "general", words: [
+    { en: "Today", ipa: "/təˈdeɪ/", es: "Hoy", pic: "📅", ex: "Today is Monday." },
+    { en: "Tomorrow", ipa: "/təˈmɑroʊ/", es: "Mañana", pic: "🌄", ex: "See you tomorrow." },
+    { en: "Yesterday", ipa: "/ˈjɛstərˌdeɪ/", es: "Ayer", pic: "⏪", ex: "Yesterday was busy." },
+    { en: "Hour", ipa: "/aʊər/", es: "Hora", pic: "⏰", ex: "I worked twelve hours." },
+    { en: "Week", ipa: "/wik/", es: "Semana", pic: "📆", ex: "Next week is vacation." },
+    { en: "Weekend", ipa: "/ˈwikˌɛnd/", es: "Fin de semana", pic: "🎉", ex: "Have a great weekend!" },
+  ]},
+
+  "🏭 Línea de pintura": { type: "work", words: [
+    { en: "Paint line", ipa: "/peɪnt laɪn/", es: "Línea de pintura", pic: "🎨", ex: "I work on the paint line." },
+    { en: "Paint booth", ipa: "/peɪnt buθ/", es: "Cabina de pintura", pic: "🏭", ex: "The paint booth is closed." },
+    { en: "Conveyor", ipa: "/kənˈveɪər/", es: "Banda transportadora", pic: "➡️", ex: "The conveyor stopped." },
+    { en: "Hook", ipa: "/hʊk/", es: "Gancho", pic: "🪝", ex: "Hang the part on the hook." },
+    { en: "Rack", ipa: "/ræk/", es: "Estante / rack", pic: "🗄️", ex: "Put it on the empty rack." },
+    { en: "Cart", ipa: "/kɑrt/", es: "Carrito", pic: "🛒", ex: "Push the cart over here." },
+    { en: "Skid", ipa: "/skɪd/", es: "Estiba / paleta", pic: "📦", ex: "Stack them on the skid." },
+    { en: "Oven", ipa: "/ˈʌvən/", es: "Horno (de curado)", pic: "🔥", ex: "The oven cures the paint." },
+    { en: "Primer", ipa: "/ˈpraɪmər/", es: "Imprimante / base", pic: "🖌️", ex: "Primer goes on first." },
+    { en: "Topcoat", ipa: "/ˈtɑpˌkoʊt/", es: "Capa final", pic: "✨", ex: "The topcoat needs to dry." },
+    { en: "Clearcoat", ipa: "/ˈklɪrˌkoʊt/", es: "Barniz transparente", pic: "💎", ex: "Clearcoat protects the color." },
+    { en: "Curing", ipa: "/ˈkjʊrɪŋ/", es: "Curado / secado", pic: "🌡️", ex: "Curing takes 30 minutes." },
+  ]},
+  "🚗 Partes del carro": { type: "work", words: [
+    { en: "Bumper", ipa: "/ˈbʌmpər/", es: "Bómper / paragolpes", pic: "🚗", ex: "Unload the front bumper." },
+    { en: "Fender", ipa: "/ˈfɛndər/", es: "Guardabarros", pic: "🛞", ex: "Be careful with the fender." },
+    { en: "Hood", ipa: "/hʊd/", es: "Capó", pic: "🚙", ex: "The hood is heavy." },
+    { en: "Door", ipa: "/dɔr/", es: "Puerta", pic: "🚪", ex: "Hang the door on the rack." },
+    { en: "Trunk lid", ipa: "/trʌŋk lɪd/", es: "Tapa del baúl", pic: "📦", ex: "Check the trunk lid for runs." },
+    { en: "Mirror cap", ipa: "/ˈmɪrər kæp/", es: "Carcasa de espejo", pic: "🪞", ex: "Mirror caps are small parts." },
+    { en: "Spoiler", ipa: "/ˈspɔɪlər/", es: "Alerón", pic: "🏎️", ex: "The spoiler comes off last." },
+    { en: "Body panel", ipa: "/ˈbɑdi ˈpænəl/", es: "Panel de carrocería", pic: "🚘", ex: "Inspect each body panel." },
+    { en: "Grille", ipa: "/ɡrɪl/", es: "Parrilla / rejilla", pic: "🔲", ex: "The grille was painted black." },
+  ]},
+  "⚠️ Seguridad": { type: "work", words: [
+    { en: "Safety glasses", ipa: "/ˈseɪfti ˈɡlæsɪz/", es: "Gafas de seguridad", pic: "🥽", ex: "Always wear safety glasses." },
+    { en: "Gloves", ipa: "/ɡlʌvz/", es: "Guantes", pic: "🧤", ex: "Put on your gloves." },
+    { en: "Mask", ipa: "/mæsk/", es: "Mascarilla", pic: "😷", ex: "The mask protects your lungs." },
+    { en: "Respirator", ipa: "/ˈrɛspəˌreɪtər/", es: "Respirador", pic: "🫁", ex: "Use a respirator near fumes." },
+    { en: "Earplugs", ipa: "/ˈɪrˌplʌɡz/", es: "Tapones para oídos", pic: "👂", ex: "Wear earplugs in this area." },
+    { en: "Steel-toe boots", ipa: "/stil toʊ buts/", es: "Botas con punta de acero", pic: "🥾", ex: "Steel-toe boots are required." },
+    { en: "Hard hat", ipa: "/hɑrd hæt/", es: "Casco", pic: "⛑️", ex: "Don't forget your hard hat." },
+    { en: "Lockout", ipa: "/ˈlɑkˌaʊt/", es: "Bloqueo (LOTO)", pic: "🔒", ex: "Follow lockout procedure." },
+    { en: "Hazard", ipa: "/ˈhæzərd/", es: "Peligro / riesgo", pic: "☣️", ex: "Report any hazard immediately." },
+    { en: "Emergency", ipa: "/ɪˈmɜrdʒənsi/", es: "Emergencia", pic: "🚨", ex: "In an emergency, call the supervisor." },
+    { en: "First aid", ipa: "/fɜrst eɪd/", es: "Primeros auxilios", pic: "🩹", ex: "I need first aid, please." },
+  ]},
+  "👷 Personas y roles": { type: "work", words: [
+    { en: "Supervisor", ipa: "/ˈsupərˌvaɪzər/", es: "Supervisor", pic: "👨‍💼", ex: "Ask your supervisor first." },
+    { en: "Team leader", ipa: "/tim ˈlidər/", es: "Líder de equipo", pic: "👷", ex: "The team leader is on break." },
+    { en: "Operator", ipa: "/ˈɑpəˌreɪtər/", es: "Operario", pic: "🧑‍🏭", ex: "I'm a paint line operator." },
+    { en: "Inspector", ipa: "/ɪnˈspɛktər/", es: "Inspector (de calidad)", pic: "🔍", ex: "The inspector found a defect." },
+    { en: "Coworker", ipa: "/ˈkoʊˌwɜrkər/", es: "Compañero de trabajo", pic: "🤝", ex: "My coworker is helping me." },
+    { en: "Forklift driver", ipa: "/ˈfɔrkˌlɪft ˈdraɪvər/", es: "Conductor de montacargas", pic: "🚜", ex: "Wait for the forklift driver." },
+    { en: "Maintenance", ipa: "/ˈmeɪntənəns/", es: "Mantenimiento", pic: "🔧", ex: "Call maintenance, the line is down." },
+  ]},
+  "🛠️ Acciones del trabajo": { type: "work", words: [
+    { en: "To unload", ipa: "/tu ʌnˈloʊd/", es: "Descargar", pic: "📤", ex: "I unload painted parts all day." },
+    { en: "To load", ipa: "/tu loʊd/", es: "Cargar", pic: "📥", ex: "Load the rack carefully." },
+    { en: "To inspect", ipa: "/tu ɪnˈspɛkt/", es: "Inspeccionar", pic: "🔍", ex: "Inspect every part for defects." },
+    { en: "To stack", ipa: "/tu stæk/", es: "Apilar", pic: "📚", ex: "Stack the parts neatly." },
+    { en: "To hang", ipa: "/tu hæŋ/", es: "Colgar", pic: "🪝", ex: "Hang the door on the hook." },
+    { en: "To wipe", ipa: "/tu waɪp/", es: "Limpiar / pasar trapo", pic: "🧽", ex: "Wipe the dust off the part." },
+    { en: "To touch up", ipa: "/tu tʌtʃ ʌp/", es: "Retocar", pic: "🖌️", ex: "Touch up the small scratch." },
+    { en: "To reject", ipa: "/tu rɪˈdʒɛkt/", es: "Rechazar", pic: "❌", ex: "Reject any part with runs." },
+    { en: "To clock in", ipa: "/tu klɑk ɪn/", es: "Marcar entrada", pic: "🕗", ex: "Clock in before your shift." },
+    { en: "To clock out", ipa: "/tu klɑk aʊt/", es: "Marcar salida", pic: "🕔", ex: "Don't forget to clock out." },
+  ]},
+  "🎨 Defectos de pintura": { type: "work", words: [
+    { en: "Run", ipa: "/rʌn/", es: "Chorreado / corrida", pic: "💧", ex: "There's a run on the bumper." },
+    { en: "Drip", ipa: "/drɪp/", es: "Goteo", pic: "💦", ex: "Watch for drips on the edge." },
+    { en: "Orange peel", ipa: "/ˈɔrɪndʒ pil/", es: "Piel de naranja", pic: "🍊", ex: "Orange peel means rough texture." },
+    { en: "Dirt", ipa: "/dɜrt/", es: "Suciedad / mugre", pic: "🟤", ex: "There's dirt in the paint." },
+    { en: "Scratch", ipa: "/skrætʃ/", es: "Rayón", pic: "✏️", ex: "I see a small scratch here." },
+    { en: "Dent", ipa: "/dɛnt/", es: "Abolladura", pic: "🔨", ex: "This panel has a dent." },
+    { en: "Bubble", ipa: "/ˈbʌbəl/", es: "Burbuja", pic: "🫧", ex: "There are bubbles in the clearcoat." },
+    { en: "Fisheye", ipa: "/ˈfɪʃˌaɪ/", es: "Ojo de pez (defecto)", pic: "👁️", ex: "Fisheyes are caused by oil." },
+    { en: "Defect", ipa: "/ˈdiˌfɛkt/", es: "Defecto", pic: "⚠️", ex: "Mark any defect with tape." },
+    { en: "Rework", ipa: "/ˈriˌwɜrk/", es: "Retrabajo", pic: "🔄", ex: "This part needs rework." },
+  ]},
 };
 
 const phrases = [
+  // GENERAL
   { en: "Could you repeat that, please?", es: "¿Podría repetir eso, por favor?",
-    note: "Úsala sin miedo. Los gringos no se molestan cuando pides que repitan." },
+    note: "Úsala sin miedo. Los gringos no se molestan cuando pides que repitan.", section: "general" },
   { en: "I'm sorry, I don't understand.", es: "Lo siento, no entiendo.",
-    note: "Más natural que \"I don't know what you said\", que suena cortante." },
+    note: "Más natural que \"I don't know what you said\".", section: "general" },
   { en: "How do you say ___ in English?", es: "¿Cómo se dice ___ en inglés?",
-    note: "Frase dorada para aprender. Usa \"say\", no \"tell\"." },
-  { en: "I'm from Colombia.", es: "Soy de Colombia.",
-    note: "Pronuncia \"Colombia\" con O corta: /kəˈlʌmbiə/, no \"Co-LOM-bia\" a la española." },
-  { en: "Can I have a coffee, please?", es: "¿Me puede dar un café, por favor?",
-    note: "No traduzcas \"¿me regala?\" literal — \"give me\" suena brusco." },
+    note: "Frase dorada para aprender. Usa \"say\", no \"tell\".", section: "general" },
+  { en: "Can you speak slower, please?", es: "¿Puede hablar más despacio, por favor?",
+    note: "Mejor que \"speak slowly\" en conversación informal.", section: "general" },
   { en: "I've been living here for two years.", es: "Llevo dos años viviendo aquí.",
-    note: "Present Perfect Continuous: \"llevo\" + tiempo = \"I've been\" + -ing + \"for\" + tiempo." },
+    note: "Present Perfect Continuous: \"llevo\" + tiempo = \"I've been\" + -ing + \"for\" + tiempo.", section: "general" },
   { en: "Actually, I disagree.", es: "De hecho, no estoy de acuerdo.",
-    note: "Falso amigo: \"actually\" NO es \"actualmente\". Es \"en realidad\". Actualmente = currently." },
+    note: "Falso amigo: \"actually\" NO es \"actualmente\". Es \"en realidad\".", section: "general" },
   { en: "I'm embarrassed.", es: "Estoy avergonzado(a).",
-    note: "⚠️ \"Embarrassed\" ≠ embarazada. Embarazada = pregnant. Error muy común 😅." },
-  { en: "Let me think about it.", es: "Déjame pensarlo.",
-    note: "Perfecta para ganar tiempo en una conversación sin quedarse callado." },
-  { en: "Thank you so much, I appreciate it.", es: "Muchas gracias, lo aprecio.",
-    note: "Más cálido que un simple \"thanks\". Los colombianos somos cálidos — que se note." },
+    note: "⚠️ \"Embarrassed\" ≠ embarazada. Embarazada = pregnant.", section: "general" },
+
+  // WORK - Communication with supervisors
+  { en: "Good morning. I'm ready to start.", es: "Buenos días. Estoy listo para empezar.",
+    note: "Empieza tu turno con esta frase — siempre causa buena impresión.", section: "work" },
+  { en: "What's the plan for today?", es: "¿Cuál es el plan para hoy?",
+    note: "Para preguntarle al supervisor qué se va a hacer en el turno.", section: "work" },
+  { en: "Where do you want me?", es: "¿Dónde me necesitas?",
+    note: "Frase corta y útil cuando llegas y no sabes a qué estación ir.", section: "work" },
+  { en: "Can I take my break now?", es: "¿Puedo tomar mi descanso ahora?",
+    note: "Pregunta antes de irte al break, especialmente con supervisor nuevo.", section: "work" },
+  { en: "I need to use the washroom.", es: "Necesito ir al baño.",
+    note: "En Canadá se dice \"washroom\". En EE.UU. \"restroom\" o \"bathroom\".", section: "work" },
+  { en: "Can someone cover for me?", es: "¿Alguien me puede cubrir?",
+    note: "Cuando necesitas que alguien tome tu lugar un momento.", section: "work" },
+
+  // WORK - Reporting issues
+  { en: "The line is down.", es: "La línea está parada.",
+    note: "\"Down\" = parado/no funciona. También: \"the machine is down\".", section: "work" },
+  { en: "There's a problem with this part.", es: "Hay un problema con esta parte.",
+    note: "Genérica y útil. Luego puedes mostrar el defecto.", section: "work" },
+  { en: "This one needs rework.", es: "Esta necesita retrabajo.",
+    note: "\"Rework\" = retrabajo. Frase clave en pintura.", section: "work" },
+  { en: "I found a defect — there's a run here.", es: "Encontré un defecto — hay una corrida aquí.",
+    note: "Combina \"defect\" con el tipo específico (run, drip, scratch, etc.).", section: "work" },
+  { en: "We're running out of racks.", es: "Se nos están acabando los racks.",
+    note: "\"To run out of\" = quedarse sin algo. Útil para muchas situaciones.", section: "work" },
+  { en: "Can you call maintenance?", es: "¿Puedes llamar a mantenimiento?",
+    note: "Cuando algo se daña y no puedes arreglarlo tú mismo.", section: "work" },
+
+  // WORK - Safety
+  { en: "Be careful, this part is hot.", es: "Cuidado, esta parte está caliente.",
+    note: "Las partes salen calientes del horno — siempre advierte a otros.", section: "work" },
+  { en: "Watch out!", es: "¡Cuidado!",
+    note: "Más urgente que \"be careful\". Para peligros inmediatos.", section: "work" },
+  { en: "I think I hurt myself.", es: "Creo que me lastimé.",
+    note: "Reporta SIEMPRE cualquier lesión, por pequeña que sea. Es por tu protección.", section: "work" },
+  { en: "Where's the first aid kit?", es: "¿Dónde está el botiquín?",
+    note: "Memoriza esta frase — esperemos no usarla.", section: "work" },
+
+  // WORK - Asking coworkers
+  { en: "Can you give me a hand?", es: "¿Me puedes dar una mano? / ¿Me ayudas?",
+    note: "\"Give me a hand\" es informal y muy común entre compañeros.", section: "work" },
+  { en: "I've got it.", es: "Yo me encargo.",
+    note: "Cuando vas a hacer algo tú mismo y no necesitas ayuda.", section: "work" },
+  { en: "Are you almost done?", es: "¿Ya casi terminas?",
+    note: "Para coordinar con el compañero antes de pasar al siguiente paso.", section: "work" },
+  { en: "Heads up — bumpers coming through!", es: "¡Atentos — vienen bómpers!",
+    note: "\"Heads up\" = aviso amistoso. Muy usado en fábricas.", section: "work" },
 ];
 
 const tips = [
-  { t: "La 'H' sí se pronuncia",
+  // BASIC
+  { t: "La 'H' sí se pronuncia", level: "básico",
     d: "En español la H es muda. En inglés suena como J suave. <code>Hello</code> NO es \"elou\", es \"jelou\"." },
-  { t: "Vocales cortas vs largas",
+  { t: "Vocales cortas vs largas", level: "básico",
     d: "<code>ship</code> (barco) y <code>sheep</code> (oveja) NO suenan igual. Corta (/ɪ/) vs larga (/iː/)." },
-  { t: "La 'TH' existe y hay que practicarla",
+  { t: "La 'TH' existe y hay que practicarla", level: "básico",
     d: "Saca la lengua entre los dientes. <code>think</code>, <code>three</code>, <code>thank you</code>." },
-  { t: "Falsos amigos asesinos",
+  { t: "Falsos amigos asesinos", level: "básico",
     d: "<code>Actually</code>=en realidad. <code>Embarrassed</code>=avergonzado. <code>Exit</code>=salida. <code>Library</code>=biblioteca." },
-  { t: "No traduzcas palabra por palabra",
+  { t: "No traduzcas palabra por palabra", level: "básico",
     d: "\"Tengo hambre\" NO es \"I have hunger\" — es <code>I'm hungry</code>. \"Tengo 25 años\" = <code>I'm 25 years old</code>." },
-  { t: "La 'S' al final sí se dice",
+  { t: "La 'S' al final sí se dice", level: "básico",
     d: "Tendemos a comernos las S. En inglés son cruciales: marcan plural y tercera persona." },
-  { t: "No uses doble negación",
+
+  // INTERMEDIATE / ADVANCED
+  { t: "Phrasal verbs en la fábrica", level: "intermedio", advanced: true,
+    d: "El inglés del trabajo está LLENO de phrasal verbs: <code>clock in/out</code> (marcar), <code>shut down</code> (apagar), <code>hand off</code> (entregar el turno), <code>pick up</code> (recoger), <code>set up</code> (preparar), <code>break down</code> (averiarse), <code>run out of</code> (quedarse sin)." },
+  { t: "\"Used to\" para hábitos pasados", level: "intermedio", advanced: true,
+    d: "<code>I used to work in construction</code> = Antes trabajaba en construcción (ya no). Diferente a <code>I'm used to working night shifts</code> = Estoy acostumbrado a turnos de noche. Mismo \"used\", significados muy diferentes." },
+  { t: "Modales: can, could, would, should", level: "intermedio", advanced: true,
+    d: "<code>Can you help?</code> es directo. <code>Could you help?</code> es más educado. <code>Would you mind helping?</code> es lo más formal. En el trabajo, \"could\" es perfecto para supervisores." },
+  { t: "\"Get\" lo es todo", level: "intermedio", advanced: true,
+    d: "<code>Get</code> reemplaza muchos verbos: <code>get tired</code> (cansarse), <code>get hurt</code> (lastimarse), <code>get paid</code> (cobrar), <code>get along with</code> (llevarse bien con), <code>get the hang of it</code> (agarrarle la onda)." },
+  { t: "Reported speech (lo que dijo el supervisor)", level: "intermedio", advanced: true,
+    d: "Cuando le cuentas a alguien lo que otro dijo: <code>The supervisor said the line would start at 7</code>. \"Said\" + cambia tiempo verbal hacia atrás (will → would, is → was, has → had)." },
+  { t: "Pronunciación de -ED en pasado", level: "intermedio", advanced: true,
+    d: "Tres formas: <code>worked</code> suena \"workt\" (T), <code>painted</code> suena \"painted\" (ID), <code>cleaned</code> suena \"cleend\" (D). La regla: T después de sonidos sordos, ID después de T/D, D después de sonidos sonoros." },
+  { t: "Slang común en fábricas", level: "intermedio", advanced: true,
+    d: "<code>The shift's a grind</code> = el turno es duro. <code>I'm beat</code> = estoy reventado. <code>Call it a day</code> = darlo por terminado. <code>Pull your weight</code> = hacer tu parte. <code>Slack off</code> = vaguear." },
+  { t: "No uses doble negación", level: "básico",
     d: "\"No tengo nada\" = <code>I don't have anything</code>, NUNCA \"I don't have nothing\"." },
-  { t: "Practica con música",
-    d: "Busca canciones que te gusten (Juanes, Shakira, Carlos Vives) y compara letras. Divertido y familiar." },
+  { t: "Practica con podcasts cortos", level: "intermedio", advanced: true,
+    d: "Para nivel intermedio: \"6 Minute English\" de la BBC, \"Luke's English Podcast\". Empieza con 6 minutos al día — el oído se entrena solo." },
 ];
 
 const achievements = [
@@ -378,20 +526,23 @@ const achievements = [
   { id: "vocab_10", ico: "🥉", nm: "Vocabulario Bronce", ds: "Revisa 10 tarjetas", goal: 10, stat: "cardsReviewed" },
   { id: "vocab_50", ico: "🥈", nm: "Vocabulario Plata", ds: "Revisa 50 tarjetas", goal: 50, stat: "cardsReviewed" },
   { id: "vocab_100", ico: "🥇", nm: "Vocabulario Oro", ds: "Revisa 100 tarjetas", goal: 100, stat: "cardsReviewed" },
+  { id: "vocab_250", ico: "💎", nm: "Vocabulario Diamante", ds: "Revisa 250 tarjetas", goal: 250, stat: "cardsReviewed" },
   { id: "quiz_10", ico: "🧠", nm: "Mente despierta", ds: "10 respuestas correctas", goal: 10, stat: "testsCorrect" },
   { id: "quiz_50", ico: "🎓", nm: "Estudiante aplicado", ds: "50 respuestas correctas", goal: 50, stat: "testsCorrect" },
+  { id: "quiz_200", ico: "🦉", nm: "Sabio del inglés", ds: "200 respuestas correctas", goal: 200, stat: "testsCorrect" },
   { id: "speller", ico: "⌨️", nm: "Buen ortógrafo", ds: "Escribe 5 palabras correctas", goal: 5, stat: "spellingCorrect" },
   { id: "good_ear", ico: "👂", nm: "Buen oído", ds: "Acierta 5 escuchas", goal: 5, stat: "listeningCorrect" },
+  { id: "factory_pro", ico: "🏭", nm: "Pro de la fábrica", ds: "20 aciertos en vocab. de trabajo", goal: 20, stat: "workCorrect" },
   { id: "streak_3", ico: "🔥", nm: "En racha", ds: "3 días seguidos", goal: 3, stat: "streak" },
   { id: "streak_7", ico: "💪", nm: "Una semana fuerte", ds: "7 días seguidos", goal: 7, stat: "streak" },
   { id: "streak_30", ico: "🏆", nm: "Maratonista", ds: "30 días seguidos", goal: 30, stat: "streak" },
-  { id: "level_5", ico: "⭐", nm: "Nivel 5", ds: "Alcanza el nivel 5", goal: 5, stat: "level" },
 ];
 
-const STORAGE_KEY = "aprende_ingles_progress_v1";
+const STORAGE_KEY = "aprende_ingles_progress_v2";
 const defaultState = {
   xp: 0, cardsReviewed: 0, testsCorrect: 0, testsTotal: 0,
-  spellingCorrect: 0, listeningCorrect: 0, streak: 0, lastDay: null,
+  spellingCorrect: 0, listeningCorrect: 0, workCorrect: 0,
+  streak: 0, lastDay: null,
   todayXp: 0, todayCards: 0, todayTests: 0,
   unlockedAchievements: [], bestQuizStreak: 0,
 };
@@ -492,7 +643,8 @@ let currentIndex = 0;
 const pillsEl = document.getElementById("cat-pills");
 Object.keys(vocab).forEach(cat => {
   const p = document.createElement("button");
-  p.className = "pill" + (cat === currentCategory ? " active" : "");
+  const isWork = vocab[cat].type === "work";
+  p.className = "pill" + (isWork ? " work" : "") + (cat === currentCategory ? " active" : "");
   p.textContent = cat;
   p.onclick = () => {
     currentCategory = cat; currentIndex = 0;
@@ -505,7 +657,7 @@ Object.keys(vocab).forEach(cat => {
 
 const cardEl = document.getElementById("card");
 function renderCard() {
-  const list = vocab[currentCategory];
+  const list = vocab[currentCategory].words;
   const item = list[currentIndex];
   document.getElementById("card-pic").textContent = item.pic;
   document.getElementById("card-pic-back").textContent = item.pic;
@@ -523,7 +675,7 @@ cardEl.onclick = (e) => {
 };
 document.getElementById("speak-front").onclick = (e) => {
   e.stopPropagation();
-  speak(vocab[currentCategory][currentIndex].en);
+  speak(vocab[currentCategory].words[currentIndex].en);
 };
 document.getElementById("btn-flip").onclick = () => cardEl.classList.toggle("flipped");
 
@@ -531,7 +683,7 @@ function advance(known) {
   state.cardsReviewed++; state.todayCards++;
   saveState();
   awardXp(known ? 10 : 5, known ? "¡bien!" : "sigue practicando");
-  const list = vocab[currentCategory];
+  const list = vocab[currentCategory].words;
   currentIndex = (currentIndex + 1) % list.length;
   renderCard();
 }
@@ -540,22 +692,51 @@ document.getElementById("btn-dunno").onclick = () => advance(false);
 renderCard();
 
 const phraseList = document.getElementById("phrase-list");
-phrases.forEach(p => {
-  const div = document.createElement("div");
-  div.className = "phrase";
-  div.innerHTML = `
-    <button class="speak-btn" title="Escuchar">🔊</button>
-    <div class="en-line">🇬🇧 ${p.en}</div>
-    <div class="es-line">🇨🇴 ${p.es}</div>
-    <div class="note">💡 ${p.note}</div>`;
-  div.querySelector(".speak-btn").onclick = () => speak(p.en);
-  phraseList.appendChild(div);
+const sections = [
+  { key: "general", title: "📚 Frases generales" },
+  { key: "work", title: "🏭 Frases para el trabajo" },
+];
+sections.forEach(sec => {
+  const h = document.createElement("div");
+  h.className = "phrase-section-title";
+  h.textContent = sec.title;
+  phraseList.appendChild(h);
+  phrases.filter(p => p.section === sec.key).forEach(p => {
+    const div = document.createElement("div");
+    div.className = "phrase" + (sec.key === "work" ? " work" : "");
+    div.innerHTML = `
+      <button class="speak-btn" title="Escuchar">🔊</button>
+      <div class="en-line">🇬🇧 ${p.en}</div>
+      <div class="es-line">🇨🇴 ${p.es}</div>
+      <div class="note">💡 ${p.note}</div>`;
+    div.querySelector(".speak-btn").onclick = () => speak(p.en);
+    phraseList.appendChild(div);
+  });
 });
 
-const allWords = Object.values(vocab).flat();
+function getWordPool(mode) {
+  if (mode === "general") {
+    return Object.entries(vocab).filter(([k,v]) => v.type === "general").flatMap(([k,v]) => v.words.map(w => ({...w, category: k, isWork: false})));
+  }
+  if (mode === "work") {
+    return Object.entries(vocab).filter(([k,v]) => v.type === "work").flatMap(([k,v]) => v.words.map(w => ({...w, category: k, isWork: true})));
+  }
+  return Object.entries(vocab).flatMap(([k,v]) => v.words.map(w => ({...w, category: k, isWork: v.type === "work"})));
+}
+
 let currentTest = "multiple";
+let currentMode = "all";
 let testStreak = 0;
 let recentResults = [];
+
+document.getElementById("test-mode-toggle").addEventListener("click", e => {
+  const b = e.target.closest(".mode-pill");
+  if (!b) return;
+  document.querySelectorAll(".mode-pill").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  currentMode = b.dataset.mode;
+  newTest();
+});
 
 document.getElementById("test-picker").addEventListener("click", e => {
   const c = e.target.closest(".test-card");
@@ -580,12 +761,13 @@ function updateTestUI() {
   });
 }
 
-function recordResult(isRight, baseXp, statKey) {
+function recordResult(isRight, baseXp, statKey, isWorkWord) {
   state.testsTotal++;
   state.todayTests++;
   if (isRight) {
     state.testsCorrect++;
     if (statKey) state[statKey]++;
+    if (isWorkWord) state.workCorrect++;
     testStreak++;
     if (testStreak > state.bestQuizStreak) state.bestQuizStreak = testStreak;
     awardXp(baseXp + Math.min(testStreak, 5) * 2, testStreak > 1 ? `racha ${testStreak}!` : "correcto");
@@ -598,16 +780,22 @@ function recordResult(isRight, baseXp, statKey) {
 }
 
 function newTest() {
-  if (currentTest === "multiple") renderMultiple();
-  else if (currentTest === "picture") renderPicture();
-  else if (currentTest === "spelling") renderSpelling();
-  else if (currentTest === "listening") renderListening();
+  const pool = getWordPool(currentMode);
+  if (pool.length < 4) {
+    document.getElementById("test-content").innerHTML = '<div class="quiz-q">No hay suficientes palabras en este modo.</div>';
+    return;
+  }
+  if (currentTest === "multiple") renderMultiple(pool);
+  else if (currentTest === "picture") renderPicture(pool);
+  else if (currentTest === "spelling") renderSpelling(pool);
+  else if (currentTest === "listening") renderListening(pool);
+  else if (currentTest === "sentence") renderSentence(pool);
   updateTestUI();
 }
 
-function renderMultiple() {
-  const correct = allWords[Math.floor(Math.random() * allWords.length)];
-  const distractors = shuffle(allWords.filter(w => w.es !== correct.es)).slice(0, 3);
+function renderMultiple(pool) {
+  const correct = pool[Math.floor(Math.random() * pool.length)];
+  const distractors = shuffle(pool.filter(w => w.es !== correct.es)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
   const askEnglish = Math.random() < 0.5;
   const c = document.getElementById("test-content");
@@ -615,6 +803,7 @@ function renderMultiple() {
     <div class="quiz-q">${askEnglish
       ? `¿Cómo se dice "<span style="color:var(--co-yellow)">${correct.es}</span>" en inglés?`
       : `¿Qué significa "<span style="color:var(--co-yellow)">${correct.en}</span>"?`}
+      ${correct.isWork ? '<span class="level-badge">🏭 trabajo</span>' : ''}
     </div>
     <div class="options" id="opts"></div>`;
   const optsEl = c.querySelector("#opts");
@@ -632,19 +821,21 @@ function renderMultiple() {
           if (x.textContent === (askEnglish ? correct.en : correct.es)) x.classList.add("correct");
         });
       }
-      recordResult(ok, 15);
+      recordResult(ok, 15, null, correct.isWork);
     };
     optsEl.appendChild(b);
   });
 }
 
-function renderPicture() {
-  const correct = allWords[Math.floor(Math.random() * allWords.length)];
-  const distractors = shuffle(allWords.filter(w => w.pic !== correct.pic)).slice(0, 3);
+function renderPicture(pool) {
+  const correct = pool[Math.floor(Math.random() * pool.length)];
+  const distractors = shuffle(pool.filter(w => w.pic !== correct.pic)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
   const c = document.getElementById("test-content");
   c.innerHTML = `
-    <div class="quiz-q">¿Qué imagen corresponde a "<span style="color:var(--co-yellow)">${correct.en}</span>"?</div>
+    <div class="quiz-q">¿Qué imagen corresponde a "<span style="color:var(--co-yellow)">${correct.en}</span>"?
+      ${correct.isWork ? '<span class="level-badge">🏭 trabajo</span>' : ''}
+    </div>
     <div class="options" id="opts"></div>`;
   const optsEl = c.querySelector("#opts");
   options.forEach(opt => {
@@ -661,17 +852,19 @@ function renderPicture() {
           if (child.querySelector(".emoji").textContent === correct.pic) child.classList.add("correct");
         });
       }
-      recordResult(ok, 15);
+      recordResult(ok, 15, null, correct.isWork);
     };
     optsEl.appendChild(b);
   });
 }
 
-function renderSpelling() {
-  const correct = allWords[Math.floor(Math.random() * allWords.length)];
+function renderSpelling(pool) {
+  const correct = pool[Math.floor(Math.random() * pool.length)];
   const c = document.getElementById("test-content");
   c.innerHTML = `
-    <div class="quiz-q">Escribe en inglés: <span style="color:var(--co-yellow)">${correct.es}</span> ${correct.pic}</div>
+    <div class="quiz-q">Escribe en inglés: <span style="color:var(--co-yellow)">${correct.es}</span> ${correct.pic}
+      ${correct.isWork ? '<span class="level-badge">🏭 trabajo</span>' : ''}
+    </div>
     <input class="text-input" id="spell-input" placeholder="Escribe aquí..." autocomplete="off" autocapitalize="off" spellcheck="false" />
     <div class="card-controls" style="margin-top:12px;">
       <button class="btn primary" id="spell-check">Verificar</button>
@@ -697,24 +890,26 @@ function renderSpelling() {
     if (ok) {
       fb.className = "feedback show right";
       fb.textContent = `✅ ¡Correcto! "${correct.en}" significa "${correct.es}".`;
-      recordResult(true, 25, "spellingCorrect");
+      recordResult(true, 25, "spellingCorrect", correct.isWork);
     } else {
       fb.className = "feedback show wrong";
       fb.textContent = `❌ La respuesta correcta era: ${correct.en}`;
-      recordResult(false, 0);
+      recordResult(false, 0, null, correct.isWork);
     }
     input.disabled = true;
     c.querySelector("#spell-check").disabled = true;
   }
 }
 
-function renderListening() {
-  const correct = allWords[Math.floor(Math.random() * allWords.length)];
-  const distractors = shuffle(allWords.filter(w => w.en !== correct.en)).slice(0, 3);
+function renderListening(pool) {
+  const correct = pool[Math.floor(Math.random() * pool.length)];
+  const distractors = shuffle(pool.filter(w => w.en !== correct.en)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
   const c = document.getElementById("test-content");
   c.innerHTML = `
-    <div class="quiz-q">🎧 Escucha y elige la palabra correcta</div>
+    <div class="quiz-q">🎧 Escucha y elige la palabra correcta
+      ${correct.isWork ? '<span class="level-badge">🏭 trabajo</span>' : ''}
+    </div>
     <div style="text-align:center; margin: 10px 0 20px;">
       <button class="btn gold" id="play-audio" style="font-size:18px; padding:14px 24px;">▶️ Reproducir</button>
       <button class="btn" id="play-slow" style="margin-left:8px;">🐢 Lento</button>
@@ -738,7 +933,53 @@ function renderListening() {
           if (x.textContent === correct.en) x.classList.add("correct");
         });
       }
-      recordResult(ok, 20, "listeningCorrect");
+      recordResult(ok, 20, "listeningCorrect", correct.isWork);
+    };
+    optsEl.appendChild(b);
+  });
+}
+
+function renderSentence(pool) {
+  // Find words that have an example sentence containing the English word
+  const candidates = pool.filter(w => w.ex && w.ex.toLowerCase().includes(w.en.toLowerCase()));
+  if (candidates.length < 4) {
+    document.getElementById("test-content").innerHTML = '<div class="quiz-q">No hay suficientes oraciones para este modo.</div>';
+    return;
+  }
+  const correct = candidates[Math.floor(Math.random() * candidates.length)];
+  const distractors = shuffle(pool.filter(w => w.en !== correct.en)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+
+  // Build sentence with blank
+  const regex = new RegExp(correct.en, "i");
+  const blanked = correct.ex.replace(regex, "_____");
+
+  const c = document.getElementById("test-content");
+  c.innerHTML = `
+    <div class="quiz-q">Completa la oración:
+      ${correct.isWork ? '<span class="level-badge">🏭 trabajo</span>' : ''}
+    </div>
+    <div style="font-size:18px; padding:14px; background:rgba(252,209,22,0.08); border-radius:10px; margin-bottom:14px;">
+      "${blanked}"
+    </div>
+    <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">Pista: ${correct.es} ${correct.pic}</div>
+    <div class="options" id="opts"></div>`;
+  const optsEl = c.querySelector("#opts");
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "option";
+    b.textContent = opt.en;
+    b.onclick = () => {
+      if (b.classList.contains("correct") || b.classList.contains("wrong")) return;
+      const ok = opt.en === correct.en;
+      if (ok) b.classList.add("correct");
+      else {
+        b.classList.add("wrong");
+        [...optsEl.children].forEach(x => {
+          if (x.textContent === correct.en) x.classList.add("correct");
+        });
+      }
+      recordResult(ok, 25, null, correct.isWork);
     };
     optsEl.appendChild(b);
   });
@@ -780,6 +1021,7 @@ function refreshGoals() {
     <div class="goal"><div class="g-ico">⭐</div><div class="g-body"><div class="g-nm">XP total</div><div class="g-val">${state.xp} XP</div></div></div>
     <div class="goal"><div class="g-ico">🎴</div><div class="g-body"><div class="g-nm">Tarjetas revisadas</div><div class="g-val">${state.cardsReviewed}</div></div></div>
     <div class="goal"><div class="g-ico">✅</div><div class="g-body"><div class="g-nm">Aciertos en tests</div><div class="g-val">${state.testsCorrect} de ${state.testsTotal}</div></div></div>
+    <div class="goal"><div class="g-ico">🏭</div><div class="g-body"><div class="g-nm">Aciertos vocab. de trabajo</div><div class="g-val">${state.workCorrect}</div></div></div>
     <div class="goal"><div class="g-ico">🔥</div><div class="g-body"><div class="g-nm">Mejor racha en tests</div><div class="g-val">${state.bestQuizStreak} respuestas seguidas</div></div></div>`;
 }
 
@@ -830,8 +1072,8 @@ document.getElementById("btn-reset-all").onclick = () => {
 const tipsList = document.getElementById("tips-list");
 tips.forEach(t => {
   const div = document.createElement("div");
-  div.className = "tip";
-  div.innerHTML = `<h3>${t.t}</h3><p>${t.d}</p>`;
+  div.className = "tip" + (t.advanced ? " advanced" : "");
+  div.innerHTML = `<h3>${t.t} <span style="font-size:11px; color:var(--muted); font-weight:normal;">· ${t.level}</span></h3><p>${t.d}</p>`;
   tipsList.appendChild(div);
 });
 
